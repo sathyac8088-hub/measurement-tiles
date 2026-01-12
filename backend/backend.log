@@ -1,0 +1,20 @@
+INFO:     Started server process [4423]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50166 - "HEAD /api/prompts HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:46072 - "HEAD /api/prompts/ HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:46976 - "GET /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53398 - "GET /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53412 - "GET /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53412 - "OPTIONS /api/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53398 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47134 - "GET /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47148 - "GET /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35474 - "GET /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35476 - "GET /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35476 - "OPTIONS /api/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35474 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35474 - "OPTIONS /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35476 - "POST /api/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35476 - "GET /api/prompts HTTP/1.1" 200 OK
