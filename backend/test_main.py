@@ -53,3 +53,20 @@ def test_read_books_after_create():
     data = response.json()
     assert len(data) == 1
     assert data[0]["title"] == "Moby Dick"
+
+def test_delete_book():
+    create_resp = client.post(
+        "/books",
+        json={"title": "Moby Dick", "author": "Herman Melville"}
+    )
+    book_id = create_resp.json()["id"]
+
+    delete_resp = client.delete(f"/books/{book_id}")
+    assert delete_resp.status_code == 200
+
+    get_resp = client.get("/books")
+    assert len(get_resp.json()) == 0
+
+def test_delete_nonexistent_book():
+    delete_resp = client.delete("/books/999")
+    assert delete_resp.status_code == 404

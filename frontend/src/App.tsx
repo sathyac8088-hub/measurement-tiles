@@ -60,6 +60,14 @@ function App(): ReactElement {
     };
   }, [scannerVisible]);
 
+  const handleDelete = (id: number) => {
+    fetch(`http://localhost:8000/books/${id}`, {
+      method: 'DELETE',
+    })
+    .then(() => fetchBooks())
+    .catch(error => console.error('Error deleting book:', error));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newBook = {
@@ -133,8 +141,17 @@ function App(): ReactElement {
           <h2 className="text-2xl font-semibold mb-4">Inventory</h2>
           <ul className="space-y-4">
             {books.map(book => (
-              <li key={book.id} className="p-4 border rounded shadow bg-white hover:shadow-md transition-shadow">
-                <h3 className="text-xl font-bold text-gray-900">{book.title}</h3>
+              <li key={book.id} className="p-4 border rounded shadow bg-white hover:shadow-md transition-shadow relative">
+                <button
+                  onClick={() => handleDelete(book.id)}
+                  className="absolute top-4 right-4 text-red-500 hover:text-red-700"
+                  aria-label="Delete Book"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+                <h3 className="text-xl font-bold text-gray-900 pr-8">{book.title}</h3>
                 <p className="text-gray-700 text-sm mb-2 font-medium">by {book.author}</p>
                 <div className="grid grid-cols-2 text-sm text-gray-500 gap-1">
                   <p>Year: <span className="font-medium text-gray-800">{book.publication_year || 'N/A'}</span></p>

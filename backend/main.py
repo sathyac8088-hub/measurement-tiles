@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import models, schemas
@@ -35,3 +35,12 @@ def create_book(book: schemas.BookCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_book)
     return db_book
+
+@app.delete("/books/{book_id}")
+def delete_book(book_id: int, db: Session = Depends(get_db)):
+    db_book = db.query(models.Book).filter(models.Book.id == book_id).first()
+    if db_book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+    db.delete(db_book)
+    db.commit()
+    return {"ok": True}
