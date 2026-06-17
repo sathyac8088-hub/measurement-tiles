@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 
-import type { Book } from './types'; // Using separate types file to satisfy import type
+import type { Book } from './types';
 
 function App(): ReactElement {
   const [books, setBooks] = useState<Book[]>([]);
@@ -28,28 +28,36 @@ function App(): ReactElement {
   }, []);
 
   useEffect(() => {
-    if (scannerVisible) {
-      const scanner = new Html5QrcodeScanner(
-        "reader",
-        { fps: 10, qrbox: { width: 250, height: 150 } },
-        /* verbose= */ false
-      );
+    let qrCodeInstance: Html5Qrcode | null = null;
 
-      scanner.render(
+    if (scannerVisible) {
+      qrCodeInstance = new Html5Qrcode("reader");
+
+      qrCodeInstance.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 150 } },
         (decodedText) => {
           setIsbn(decodedText);
-          setScannerVisible(false);
-          scanner.clear();
+          setScannerVisible(false); // This will trigger the cleanup
         },
-        (_error) => {
-          // ignore scan errors
+        (_errorMessage) => {
+          // ignore background scan errors
         }
-      );
-
-      return () => {
-        scanner.clear().catch(e => console.error("Failed to clear scanner", e));
-      };
+      ).catch((err) => {
+        console.error("Error starting scanner:", err);
+      });
     }
+
+    // Cleanup function when component unmounts or scanner becomes invisible
+    return () => {
+      if (qrCodeInstance && qrCodeInstance.isScanning) {
+        qrCodeInstance.stop().then(() => {
+          qrCodeInstance?.clear();
+        }).catch((err) => {
+          console.error("Failed to stop scanner", err);
+        });
+      }
+    };
   }, [scannerVisible]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -105,13 +113,13 @@ function App(): ReactElement {
               <label className="block text-sm font-medium text-gray-700">ISBN</label>
               <div className="flex gap-2">
                 <input type="text" value={isbn} onChange={e => setIsbn(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 bg-white" />
-                <button type="button" onClick={() => setScannerVisible(!scannerVisible)} className="mt-1 bg-blue-500 text-white px-4 py-2 rounded font-semibold hover:bg-blue-600">Scan</button>
+                <button type="button" onClick={() => setScannerVisible(!scannerVisible)} className="mt-1 bg-blue-500 text-white px-4 py-2 rounded font-semibold hover:bg-blue-600">
+                  {scannerVisible ? 'Close Scanner' : 'Scan Barcode'}
+                </button>
               </div>
             </div>
 
-            {scannerVisible && (
-              <div id="reader" className="w-full mt-4 bg-white border p-2 rounded shadow-inner"></div>
-            )}
+            <div id="reader" className={`w-full mt-4 bg-white border rounded shadow-inner ${scannerVisible ? 'block' : 'hidden'}`}></div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Genre</label>
